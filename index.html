@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Barcode & QR Code </title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e3f2fd; /* Warna latar belakang biru muda */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            max-width: 850px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .logo-container {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+        .logo-text {
+            font-size: 2rem; /* Ukuran logo disesuaikan agar tidak terlalu besar */
+            font-weight: 900;
+            color: #1f2937;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            letter-spacing: -1px;
+            background-image: linear-gradient(to right, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text; /* Menambahkan properti standar */
+            -webkit-text-fill-color: transparent;
+        }
+        .logo-subtitle {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #6b7280;
+            margin-top: -5px;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .main-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: right;
+            line-height: 1.2;
+        }
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .logo-container, .main-title {
+                text-align: center;
+                width: 100%;
+            }
+        }
+        .section {
+            border: 1px solid #e2e8f0; /* Lighter border */
+            border-radius: 12px;
+            padding: 24px;
+            background-color: #f8fafc; /* Even lighter background */
+            text-align: left;
+            transition: box-shadow 0.3s ease;
+        }
+        .section:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04);
+        }
+        input[type="text"], input[type="number"], textarea, input[type="color"] {
+            border: 1px solid #cbd5e1; /* Gray-400 */
+            border-radius: 8px;
+            padding: 12px 15px;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue-500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #3b82f6; /* Blue-500 */
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+        }
+        button:hover {
+            background-color: #2563eb; /* Blue-600 */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+            box-shadow: 2px 2px 5px rgba(59, 130, 246, 0.2);
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+        .button-group button {
+            flex: 1;
+            margin-top: 0;
+        }
+        .button-group button.bg-red-500 {
+             background-color: #ef4444;
+        }
+        .button-group button.bg-red-500:hover {
+            background-color: #dc2626;
+        }
+        .button-group button.bg-red-500:active {
+            box-shadow: 2px 2px 5px rgba(239, 68, 68, 0.2);
+        }
+        .button-group button.bg-red-500 i {
+             color: #ffffff;
+        }
+        #codeOutputContainer {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background-color: #f8fafc;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .code-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            max-width: 300px;
+            width: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .code-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .code-item canvas {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .code-item .download-link {
+            background-color: #10b981; /* Green-500 */
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            width: auto;
+        }
+        .code-item .download-link:hover {
+            background-color: #059669; /* Green-600 */
+        }
+        .error-message {
+            color: #ef4444;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            text-align: left;
+            display: none;
+        }
+        .list-display {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 50px;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #ffffff;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .list-display span {
+            display: inline-block;
+            background-color: #e0f2fe; /* Light blue */
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 5px;
+            font-size: 0.9rem;
+            color: #1e40af; /* Darker blue */
+        }
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        p {
+            margin-bottom: 15px;
+            color: #6b7280;
+        }
+        #printAllCodesButton {
+            background-color: #2563eb;
+            margin-top: 25px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+            width: 100%;
+            display: none;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        }
+        #printAllCodesButton:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        /* --- Custom Label Specific Styles --- */
+        .custom-label-item {
+            width: fit-content;
+        }
+        #customLabelOutputContainer {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .code-item, .custom-label-item {
+                page-break-inside: avoid;
+            }
+            .custom-label-item canvas {
+                width: auto !important;
+                height: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <div class="logo-container">
+                <h1 class="logo-text">MHE</h1>
+                <p class="logo-subtitle">powered by mhe group</p>
+            </div>
+            <h1 class="main-title">Generator Barcode & QR Code </h1>
+        </div>
+        
+        <p class="mb-8 text-center">Buat barcode dan QR code dengan berbagai metode.</p>
+
+        <!-- Bagian Generator Barcode dari Daftar Manual -->
+        <div class="section">
+            <h2><i class="fa-solid fa-list-ul mr-2 text-blue-500"></i>Barcode dari Daftar Manual</h2>
+            <p>Tempel beberapa baris teks/angka untuk membuat Barcode. Setiap baris akan menjadi Barcode terpisah.</p>
+            <textarea id="manualBarcodeInput" placeholder="Tempel daftar barcode di sini (satu item per baris)..."></textarea>
+            <div id="manualBarcodeErrorMessage" class="error-message"></div>
+            <button id="generateManualBarcodeButton"><i class="fa-solid fa-barcode"></i> Buat Barcode dari Daftar</button>
+        </div>
+
+        <!-- Bagian Generator Barcode Berurutan -->
+        <div class="section">
+            <h2><i class="fa-solid fa-sort-numeric-up-alt mr-2 text-blue-500"></i>Barcode Berurutan</h2>
+            <p>Buat barcode secara otomatis untuk rentang angka tertentu dengan format padding nol.</p>
+            <input type="text" id="sequentialPrefixInput" placeholder="Awalan (contoh: INV-)" class="focus:ring-blue-500 focus:border-blue-500">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="number" id="sequentialStartInput" placeholder="Mulai dari angka (contoh: 1)" class="focus:ring-blue-500 focus:border-blue-500">
+                <input type="number" id="sequentialEndInput" placeholder="Sampai angka (contoh: 10)" class="focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div id="sequentialErrorMessage" class="error-message"></div>
+            <button id="generateSequentialBarcodeButton"><i class="fa-solid fa-arrow-right-to-bracket"></i> Buat Barcode Berurutan</button>
+        </div>
+
+        <!-- Bagian Generator QR Code dari Daftar Manual -->
+        <div class="section">
+            <h2><i class="fa-solid fa-qrcode mr-2 text-blue-500"></i>QR Code dari Daftar Manual</h2>
+            <p>Tempel beberapa baris teks/URL untuk membuat QR Code. Setiap baris akan menjadi QR Code terpisah.</p>
+            <textarea id="manualQrInput" placeholder="Tempel daftar QR Code di sini (satu item per baris) atau ketik satu per satu..."></textarea>
+            <div id="manualQrErrorMessage" class="error-message"></div>
+            <div class="button-group">
+                <button id="addManualQrItemButton"><i class="fa-solid fa-plus"></i> Tambah ke Daftar QR</button>
+                <button id="clearManualQrListButton" class="bg-red-500 hover:bg-red-600"><i class="fa-solid fa-trash"></i> Bersihkan Daftar QR</button>
+            </div>
+            <div id="manualQrListDisplay" class="list-display mt-4">
+                <!-- QR Code items will be displayed here -->
+            </div>
+            <button id="generateManualQrListButton"><i class="fa-solid fa-qrcode"></i> Buat QR Code dari Daftar</button>
+        </div>
+        
+        <!-- Bagian Generator Label Kustom Baru -->
+        <div class="section">
+            <h2><i class="fa-solid fa-tags mr-2 text-blue-500"></i>Generator Label Aset Kustom</h2>
+            <p>Buat label aset dengan desain dan data yang dapat dikustomisasi.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="customLabelHeaderTopText" class="block text-sm font-medium text-gray-700">Teks Header Atas</label>
+                    <input type="text" id="customLabelHeaderTopText" value="Property of ID LEX">
+                </div>
+                <div>
+                    <label for="customLabelHeaderMainText" class="block text-sm font-medium text-gray-700">Teks Judul Utama (untuk Barcode)</label>
+                    <input type="text" id="customLabelHeaderMainText" value="Pallet Mesh">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="customLabelHeaderColor" class="block text-sm font-medium text-gray-700">Warna Header</label>
+                    <input type="color" id="customLabelHeaderColor" value="#22c55e">
+                </div>
+                <div>
+                    <label for="customLabelDataAssetText" class="block text-sm font-medium text-gray-700">Teks Data Aset</label>
+                    <input type="text" id="customLabelDataAssetText" value="Data Asset">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="customLabelFooterText" class="block text-sm font-medium text-gray-700">Teks Footer</label>
+                    <input type="text" id="customLabelFooterText" value="JANGAN DI LEPAS">
+                </div>
+                <div>
+                    <label for="customLabelFooterColor" class="block text-sm font-medium text-gray-700">Warna Footer</label>
+                    <input type="color" id="customLabelFooterColor" value="#ef4444">
+                </div>
+            </div>
+
+            <p class="text-gray-600 text-sm mt-4">Masukkan URL untuk QR Code. Jika lebih dari satu, setiap URL akan menghasilkan satu label.</p>
+            <textarea id="customLabelQrInput" placeholder="Satu URL per baris (contoh: &#10;https://example.com/asset-1&#10;https://example.com/asset-2)"></textarea>
+
+            <p class="text-gray-600 text-sm mt-4">Setelan untuk pembuatan label berurutan (akan diabaikan jika Anda memasukkan daftar QR code).</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <input type="text" id="customLabelPrefixInput" placeholder="Awalan (contoh: INV-A)" value="INV-A">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="customLabelStartInput" placeholder="Mulai dari (contoh: 1)" value="1">
+                    <input type="number" id="customLabelEndInput" placeholder="Sampai (contoh: 1000)" value="1000">
+                </div>
+            </div>
+
+            <p class="text-gray-600 text-sm mt-4">Setelan dimensi cetak label (hanya berpengaruh saat dicetak).</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-center gap-2">
+                    <label for="customLabelWidthCm" class="text-sm font-medium text-gray-700">Lebar (cm)</label>
+                    <input type="number" id="customLabelWidthCm" value="8" min="1" step="0.5">
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="customLabelHeightCm" class="text-sm font-medium text-gray-700">Tinggi (cm)</label>
+                    <input type="number" id="customLabelHeightCm" value="12" min="1" step="0.5">
+                </div>
+            </div>
+            
+            <div id="customLabelErrorMessage" class="error-message"></div>
+            <button id="generateCustomLabelButton"><i class="fa-solid fa-plus-square"></i> Buat Label Aset Kustom</button>
+        </div>
+
+
+        <!-- Area Output Barcode & QR Code -->
+        <div class="section">
+            <h2><i class="fa-solid fa-list-check mr-2 text-blue-500"></i>Hasil Barcode & QR Code</h2>
+            <div id="codeOutputContainer">
+                <!-- Generated codes will be appended here -->
+            </div>
+            <button id="printAllCodesButton"><i class="fa-solid fa-print"></i> Cetak Semua Kode</button>
+        </div>
+    </div>
+
+    <!-- JsBarcode CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <!-- QRious CDN (replaces qrcode.js for better compatibility) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+    <script>
+        // Memastikan semua DOM dan script eksternal dimuat sebelum menjalankan kode
+        window.onload = function() {
+            // Get DOM elements for Manual Barcode List Generator
+            const manualBarcodeInput = document.getElementById('manualBarcodeInput');
+            const generateManualBarcodeButton = document.getElementById('generateManualBarcodeButton');
+            const manualBarcodeErrorMessage = document.getElementById('manualBarcodeErrorMessage');
+
+            // Get DOM elements for Sequential Barcode Generator
+            const sequentialPrefixInput = document.getElementById('sequentialPrefixInput');
+            const sequentialStartInput = document.getElementById('sequentialStartInput');
+            const sequentialEndInput = document.getElementById('sequentialEndInput');
+            const generateSequentialBarcodeButton = document.getElementById('generateSequentialBarcodeButton');
+            const sequentialErrorMessage = document.getElementById('sequentialErrorMessage');
+
+            // Get DOM elements for Manual QR Code List Generator
+            const manualQrInput = document.getElementById('manualQrInput');
+            const addManualQrItemButton = document.getElementById('addManualQrItemButton');
+            const clearManualQrListButton = document.getElementById('clearManualQrListButton');
+            const generateManualQrListButton = document.getElementById('generateManualQrListButton');
+            const manualQrListDisplay = document.getElementById('manualQrListDisplay');
+            const manualQrErrorMessage = document.getElementById('manualQrErrorMessage');
+            let manualQrItems = [];
+
+            // Get DOM elements for Custom Label Generator
+            const customLabelHeaderTopText = document.getElementById('customLabelHeaderTopText');
+            const customLabelHeaderMainText = document.getElementById('customLabelHeaderMainText');
+            const customLabelHeaderColor = document.getElementById('customLabelHeaderColor');
+            const customLabelDataAssetText = document.getElementById('customLabelDataAssetText');
+            const customLabelFooterText = document.getElementById('customLabelFooterText');
+            const customLabelFooterColor = document.getElementById('customLabelFooterColor');
+            const customLabelQrInput = document.getElementById('customLabelQrInput');
+            const customLabelPrefixInput = document.getElementById('customLabelPrefixInput');
+            const customLabelStartInput = document.getElementById('customLabelStartInput');
+            const customLabelEndInput = document.getElementById('customLabelEndInput');
+            const customLabelWidthCm = document.getElementById('customLabelWidthCm');
+            const customLabelHeightCm = document.getElementById('customLabelHeightCm');
+            const generateCustomLabelButton = document.getElementById('generateCustomLabelButton');
+            const customLabelErrorMessage = document.getElementById('customLabelErrorMessage');
+
+
+            // Barcode & QR Code Output Area
+            const codeOutputContainer = document.getElementById('codeOutputContainer');
+            const printAllCodesButton = document.getElementById('printAllCodesButton');
+
+            // --- General Functions ---
+            function clearOutputContainer() {
+                codeOutputContainer.innerHTML = '';
+                printAllCodesButton.style.display = 'none';
+            }
+
+            function showErrorMessage(element, message) {
+                element.textContent = message;
+                element.style.display = 'block';
+            }
+
+            function hideErrorMessage(element) {
+                element.style.display = 'none';
+            }
+
+            function updatePrintButtonVisibility() {
+                if (codeOutputContainer.children.length > 0) {
+                    printAllCodesButton.style.display = 'block';
+                } else {
+                    printAllCodesButton.style.display = 'none';
+                }
+            }
+
+            /**
+             * Creates and appends a barcode or QR code element to the output container.
+             * @param {string} type - 'barcode' or 'qrcode'.
+             * @param {string} text - The text content for the code.
+             */
+            function createCodeElement(type, text) {
+                const codeItemDiv = document.createElement('div');
+                codeItemDiv.className = 'code-item';
+
+                const renderTarget = document.createElement('canvas');
+                codeItemDiv.appendChild(renderTarget);
+
+                const downloadLink = document.createElement('a');
+                downloadLink.className = 'download-link';
+                downloadLink.textContent = `Unduh "${text}"`;
+                downloadLink.download = `${type}_${text}.png`;
+                codeItemDiv.appendChild(downloadLink);
+
+                try {
+                    if (type === 'barcode') {
+                        renderTarget.width = 300;
+                        renderTarget.height = 120;
+                        JsBarcode(renderTarget, text, {
+                            format: "CODE128",
+                            displayValue: true,
+                            fontSize: 16,
+                            height: 70,
+                            width: 2,
+                            margin: 10,
+                            lineColor: "#333",
+                            background: "#fff"
+                        });
+                    } else if (type === 'qrcode') {
+                        if (typeof QRious !== 'undefined') {
+                            renderTarget.width = 250;
+                            renderTarget.height = 250;
+                            new QRious({
+                                element: renderTarget,
+                                value: text,
+                                size: 250,
+                                foreground: 'black',
+                                background: 'white',
+                                level: 'H'
+                            });
+                        } else {
+                            throw new Error("QRious library is not loaded.");
+                        }
+                    }
+                    renderTarget.dataset.codeType = type;
+                    renderTarget.dataset.codeValue = text;
+                    downloadLink.href = renderTarget.toDataURL("image/png");
+                } catch (error) {
+                    console.error(`Error generating ${type} for "${text}":`, error);
+                    const errorText = document.createElement('p');
+                    errorText.className = 'text-red-500 text-sm mt-2';
+                    errorText.textContent = `Gagal membuat ${type} untuk "${text}".`;
+                    codeItemDiv.appendChild(errorText);
+                    downloadLink.style.display = 'none';
+                    return null;
+                }
+                return codeItemDiv;
+            }
+
+            /**
+             * Creates and appends a custom label element to the output container.
+             * @param {object} options - Customization options.
+             */
+            function createCustomLabel(options) {
+                const {
+                    topText,
+                    mainText,
+                    headerColor,
+                    assetText,
+                    footerText,
+                    footerColor,
+                    assetNumber,
+                    barcodeValue,
+                    qrValue,
+                    widthCm,
+                    heightCm
+                } = options;
+
+                // Create the main container div for the label
+                const labelItemDiv = document.createElement('div');
+                labelItemDiv.className = 'code-item custom-label-item';
+
+                // Create a canvas to draw the entire label on
+                const canvas = document.createElement('canvas');
+                labelItemDiv.appendChild(canvas);
+
+                const ctx = canvas.getContext('2d');
+
+                // Set canvas dimensions based on cm values, converting to pixels (approx.)
+                const dpi = 96; // A common DPI for screens
+                const widthPx = widthCm * dpi / 2.54;
+                const heightPx = heightCm * dpi / 2.54;
+
+                canvas.width = widthPx;
+                canvas.height = heightPx;
+
+                // Aggiungere un bordo
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(0, 0, widthPx, heightPx);
+
+                // Define proportions
+                const headerHeight = heightPx * 0.15;
+                const footerHeight = heightPx * 0.20;
+                const middleHeight = heightPx - headerHeight - footerHeight;
+
+                // --- Draw Header ---
+                ctx.fillStyle = headerColor;
+                ctx.fillRect(0, 0, widthPx, headerHeight);
+
+                // Draw Top Header Text
+                ctx.fillStyle = 'yellow';
+                ctx.font = `${Math.floor(headerHeight * 0.15)}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText(topText, widthPx / 2, headerHeight * 0.05);
+
+                // Draw Main Header Text
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${Math.floor(headerHeight * 0.5)}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(mainText, widthPx / 2, headerHeight * 0.6);
+
+                // --- Draw Middle Section ---
+                // Vertical separator
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(widthPx / 2, headerHeight, 2, middleHeight);
+
+                // Draw Left Side (Large Number & Barcode)
+                const leftSectionWidth = widthPx / 2;
+                let numberFontSize = middleHeight * 0.5;
+                let maxTextWidth = leftSectionWidth * 0.9;
+
+                ctx.font = `bold ${numberFontSize}px Inter`;
+                let textMetrics = ctx.measureText(assetNumber);
+
+                while (textMetrics.width > maxTextWidth && numberFontSize > 10) {
+                    numberFontSize -= 1;
+                    ctx.font = `bold ${numberFontSize}px Inter`;
+                    textMetrics = ctx.measureText(assetNumber);
+                }
+
+                ctx.fillStyle = 'black';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(assetNumber, leftSectionWidth / 2, headerHeight + middleHeight * 0.3);
+
+                const barcodeCanvas = document.createElement('canvas');
+                const barcodeMargin = 10;
+                const availableBarcodeWidth = leftSectionWidth - barcodeMargin * 2;
+                let barcodeBarWidth = 2;
+                const barcodeTextLength = barcodeValue.length;
+
+                if (barcodeTextLength > 15) {
+                    barcodeBarWidth = Math.max(0.5, availableBarcodeWidth / (barcodeTextLength * 9.5));
+                }
+
+                barcodeCanvas.width = availableBarcodeWidth;
+                barcodeCanvas.height = middleHeight * 0.3;
+
+                try {
+                    JsBarcode(barcodeCanvas, barcodeValue, {
+                        format: "CODE128",
+                        displayValue: false,
+                        height: middleHeight * 0.2,
+                        width: barcodeBarWidth,
+                        margin: 0,
+                        lineColor: "#000",
+                        background: "#fff"
+                    });
+                    const barcodeX = barcodeMargin;
+                    ctx.drawImage(barcodeCanvas, barcodeX, headerHeight + middleHeight * 0.55, availableBarcodeWidth, middleHeight * 0.3);
+                } catch (e) {
+                    console.error("Failed to generate barcode on custom label:", e);
+                }
+
+                // Draw Right Side (Data Asset & QR Code)
+                const rightSectionWidth = widthPx / 2;
+
+                ctx.fillStyle = 'black';
+                ctx.font = `${Math.floor(middleHeight * 0.08)}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText(assetText, widthPx / 2 + rightSectionWidth / 2, headerHeight + 10);
+
+                const qrCanvas = document.createElement('canvas');
+                const qrSize = rightSectionWidth * 0.8;
+                qrCanvas.width = qrSize;
+                qrCanvas.height = qrSize;
+
+                try {
+                    new QRious({
+                        element: qrCanvas,
+                        value: qrValue,
+                        size: qrSize,
+                        foreground: 'black',
+                        background: 'white',
+                        level: 'H'
+                    });
+                    ctx.drawImage(qrCanvas, widthPx / 2 + (rightSectionWidth - qrSize) / 2, headerHeight + middleHeight * 0.2, qrSize, qrSize);
+                } catch (e) {
+                    console.error("Failed to generate QR code on custom label:", e);
+                }
+
+                // --- Draw Footer ---
+                ctx.fillStyle = footerColor;
+                ctx.fillRect(0, headerHeight + middleHeight, widthPx, footerHeight);
+
+                // Draw Footer Text
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${Math.floor(footerHeight * 0.5)}px Inter`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(footerText, widthPx / 2, headerHeight + middleHeight + footerHeight / 2);
+
+                // Set data attributes for printing and downloading
+                canvas.dataset.codeType = 'custom-label';
+                canvas.dataset.codeValue = assetNumber;
+                canvas.dataset.widthCm = widthCm;
+                canvas.dataset.heightCm = heightCm;
+
+                // Create the download link
+                const downloadLink = document.createElement('a');
+                downloadLink.className = 'download-link';
+                downloadLink.textContent = `Unduh Label ${assetNumber}`;
+                downloadLink.download = `label_custom_${assetNumber}.png`;
+                downloadLink.href = canvas.toDataURL("image/png");
+                labelItemDiv.appendChild(downloadLink);
+
+                return labelItemDiv;
+            }
+
+            // --- Logic for Manual Barcode Generator ---
+            function generateManualBarcodes() {
+                clearOutputContainer();
+                const inputText = manualBarcodeInput.value;
+                const lines = inputText.split(/\r?\n/).filter(line => line.trim() !== '');
+
+                if (lines.length === 0) {
+                    showErrorMessage(manualBarcodeErrorMessage, "Daftar barcode kosong. Masukkan item terlebih dahulu.");
+                    updatePrintButtonVisibility();
+                    return;
+                }
+                if (lines.length > 100) {
+                    showErrorMessage(manualBarcodeErrorMessage, "Daftar terlalu besar (maks. 100 barcode).");
+                    updatePrintButtonVisibility();
+                    return;
+                }
+
+                hideErrorMessage(manualBarcodeErrorMessage);
+                let hasError = false;
+                lines.forEach(text => {
+                    const trimmedText = text.trim();
+                    if (trimmedText.length > 80) {
+                         showErrorMessage(manualBarcodeErrorMessage, `Barcode "${trimmedText.substring(0, 50)}..." terlalu panjang. Sesuaikan teks.`);
+                         hasError = true;
+                         return;
+                    }
+                    if (trimmedText) {
+                        const codeElement = createCodeElement('barcode', trimmedText);
+                        if (codeElement) codeOutputContainer.appendChild(codeElement);
+                    }
+                });
+                 if (hasError) {
+                    clearOutputContainer();
+                }
+                updatePrintButtonVisibility();
+            }
+
+            // --- Logic for Sequential Barcode Generator ---
+            function generateSequentialBarcodes() {
+                clearOutputContainer();
+                const prefix = sequentialPrefixInput.value.trim();
+                const startNum = parseInt(sequentialStartInput.value, 10);
+                const endNum = parseInt(sequentialEndInput.value, 10);
+
+                if (isNaN(startNum) || isNaN(endNum)) {
+                    showErrorMessage(sequentialErrorMessage, "Angka awal dan akhir harus valid.");
+                    updatePrintButtonVisibility();
+                    return;
+                }
+                if (startNum > endNum) {
+                    showErrorMessage(sequentialErrorMessage, "Angka awal tidak boleh lebih besar dari angka akhir.");
+                    updatePrintButtonVisibility();
+                    return;
+                }
+                if (endNum - startNum >= 100) {
+                    showErrorMessage(sequentialErrorMessage, "Rentang angka terlalu besar (maks. 100 barcode).");
+                    updatePrintButtonVisibility();
+                    return;
+                }
+
+                hideErrorMessage(sequentialErrorMessage);
+                let hasError = false;
+                const numDigits = endNum.toString().length;
+
+                for (let i = startNum; i <= endNum; i++) {
+                    const paddedNumber = i.toString().padStart(numDigits, '0');
+                    const barcodeText = prefix + paddedNumber;
+
+                    if (barcodeText.length > 80) {
+                        showErrorMessage(sequentialErrorMessage, `Barcode "${barcodeText}" terlalu panjang. Sesuaikan awalan atau rentang.`);
+                        hasError = true;
+                        break;
+                    }
+                    const codeElement = createCodeElement('barcode', barcodeText);
+                    if (codeElement) codeOutputContainer.appendChild(codeElement);
+                }
+                if (hasError) {
+                    clearOutputContainer();
+                }
+                updatePrintButtonVisibility();
+            }
+
+            // --- Logic for Manual QR Code List Generator ---
+            function updateManualQrListDisplay() {
+                manualQrListDisplay.innerHTML = '';
+                if (manualQrItems.length === 0) {
+                    manualQrListDisplay.textContent = 'Daftar kosong.';
+                    return;
+                }
+                manualQrItems.forEach(item => {
+                    const span = document.createElement('span');
+                    span.textContent = item;
+                    manualQrListDisplay.appendChild(span);
+                });
+                manualQrListDisplay.scrollTop = manualQrListDisplay.scrollHeight;
+            }
+
+            function addManualQrItemToList() {
+                const inputText = manualQrInput.value;
+                const lines = inputText.split(/\r?\n/).filter(line => line.trim() !== '');
+                let hasError = false;
+
+                hideErrorMessage(manualQrErrorMessage);
+
+                lines.forEach(line => {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine === "") {
+                        return;
+                    }
+                    if (trimmedLine.length > 500) {
+                        showErrorMessage(manualQrErrorMessage, `Beberapa teks terlalu panjang (maks. 500 karakter): "${trimmedLine.substring(0, 50)}..."`);
+                        hasError = true;
+                        return;
+                    }
+                    manualQrItems.push(trimmedLine);
+                });
+
+                if (!hasError) {
+                    manualQrInput.value = '';
+                }
+                updateManualQrListDisplay();
+            }
+
+            function clearManualQrList() {
+                manualQrItems = [];
+                updateManualQrListDisplay();
+                hideErrorMessage(manualQrErrorMessage);
+                clearOutputContainer();
+                updatePrintButtonVisibility();
+            }
+
+            function generateManualQrList() {
+                clearOutputContainer();
+                if (manualQrItems.length === 0) {
+                    showErrorMessage(manualQrErrorMessage, "Daftar QR code kosong. Tambahkan item terlebih dahulu.");
+                    updatePrintButtonVisibility();
+                    return;
+                }
+                hideErrorMessage(manualQrErrorMessage);
+
+                manualQrItems.forEach(text => {
+                    const codeElement = createCodeElement('qrcode', text);
+                    if (codeElement) codeOutputContainer.appendChild(codeElement);
+                });
+                updatePrintButtonVisibility();
+            }
+
+            // --- Logic for Custom Label Generator ---
+            function generateCustomLabels() {
+                clearOutputContainer();
+                hideErrorMessage(customLabelErrorMessage);
+
+                const topText = customLabelHeaderTopText.value;
+                const mainText = customLabelHeaderMainText.value;
+                const headerColor = customLabelHeaderColor.value;
+                const assetText = customLabelDataAssetText.value;
+                const footerText = customLabelFooterText.value;
+                const footerColor = customLabelFooterColor.value;
+                const barcodeValue = mainText;
+                const widthCm = parseFloat(customLabelWidthCm.value);
+                const heightCm = parseFloat(customLabelHeightCm.value);
+                const qrUrls = customLabelQrInput.value.split(/\r?\n/).filter(line => line.trim() !== '');
+
+                if (isNaN(widthCm) || isNaN(heightCm) || widthCm <= 0 || heightCm <= 0) {
+                    showErrorMessage(customLabelErrorMessage, "Dimensions must be valid numbers greater than 0.");
+                    return;
+                }
+
+                if (qrUrls.length > 1) {
+                    if (qrUrls.length > 50) {
+                        showErrorMessage(customLabelErrorMessage, "Too many URLs (max 50).");
+                        return;
+                    }
+
+                    const numDigits = qrUrls.length.toString().length;
+
+                    for (let i = 0; i < qrUrls.length; i++) {
+                        const paddedNumber = (i + 1).toString().padStart(numDigits, '0');
+                        const assetNumber = paddedNumber;
+                        const qrValue = qrUrls[i];
+                        
+                        const labelOptions = {
+                            topText, mainText, headerColor, assetText, footerText, footerColor,
+                            assetNumber, barcodeValue, qrValue, widthCm, heightCm
+                        };
+                        
+                        const labelElement = createCustomLabel(labelOptions);
+                        if (labelElement) codeOutputContainer.appendChild(labelElement);
+                    }
+
+                } else {
+                    const startNum = parseInt(customLabelStartInput.value, 10);
+                    const endNum = parseInt(customLabelEndInput.value, 10);
+                    const prefix = customLabelPrefixInput.value.trim();
+                    const qrValue = qrUrls.length === 1 ? qrUrls[0] : 'https://example.com';
+
+                    if (isNaN(startNum) || isNaN(endNum)) {
+                        showErrorMessage(customLabelErrorMessage, "Start and end numbers must be valid.");
+                        return;
+                    }
+                    if (startNum > endNum) {
+                        showErrorMessage(customLabelErrorMessage, "Start number cannot be greater than end number.");
+                        return;
+                    }
+                    if (endNum - startNum >= 50) {
+                         showErrorMessage(customLabelErrorMessage, "Number range is too large (max 50 labels).");
+                         return;
+                    }
+
+                    const numDigits = endNum.toString().length;
+
+                    for (let i = startNum; i <= endNum; i++) {
+                        const paddedNumber = i.toString().padStart(numDigits, '0');
+                        const assetNumber = prefix + paddedNumber;
+                        
+                        const labelOptions = {
+                            topText, mainText, headerColor, assetText, footerText, footerColor,
+                            assetNumber, barcodeValue, qrValue, widthCm, heightCm
+                        };
+                        
+                        const labelElement = createCustomLabel(labelOptions);
+                        if (labelElement) codeOutputContainer.appendChild(labelElement);
+                    }
+                }
+                updatePrintButtonVisibility();
+            }
+
+            // --- Logic for Print All Codes ---
+            function printAllCodes() {
+                const printWindow = window.open('', '_blank');
+
+                printWindow.document.write('<html><head><title>Cetak Barcode & QR Code</title>');
+                printWindow.document.write('<style>');
+                printWindow.document.write('body { font-family: "Inter", sans-serif; margin: 20px; text-align: center; }');
+                printWindow.document.write('.print-code-item { display: inline-block; margin: 15px; border: 1px solid #ccc; padding: 10px; border-radius: 8px; vertical-align: top; }');
+                printWindow.document.write('.print-custom-label { box-sizing: content-box; display: inline-block; margin: 10px; border: none; }');
+                printWindow.document.write('.print-code-item img, .print-custom-label canvas { max-width: 100%; height: auto; display: block; margin: 0 auto; }');
+                printWindow.document.write('@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .print-code-item, .print-custom-label { page-break-inside: avoid; } }');
+                printWindow.document.write('</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write('<h1 style="text-align: center;">Daftar Barcode & QR Code</h1>');
+
+                const codeItems = codeOutputContainer.querySelectorAll('.code-item');
+
+                codeItems.forEach(item => {
+                    const canvas = item.querySelector('canvas');
+                    if (canvas) {
+                        const dataURL = canvas.toDataURL("image/png");
+                        const type = canvas.dataset.codeType;
+                        const value = canvas.dataset.codeValue;
+                        const altText = `${type === 'barcode' ? 'Barcode' : 'QR Code'} untuk ${value}`;
+
+                        if (type === 'custom-label') {
+                            const widthCm = canvas.dataset.widthCm;
+                            const heightCm = canvas.dataset.heightCm;
+                            printWindow.document.write(`<div class="print-custom-label" style="width: ${widthCm}cm; height: ${heightCm}cm;">`);
+                            printWindow.document.write(`<img src="${dataURL}" alt="Label Kustom untuk ${value}" style="width: 100%; height: 100%;">`);
+                            printWindow.document.write('</div>');
+                        } else {
+                            printWindow.document.write('<div class="print-code-item">');
+                            printWindow.document.write(`<img src="${dataURL}" alt="${altText}">`);
+                            printWindow.document.write('</div>');
+                        }
+                    }
+                });
+
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+            }
+
+            // --- Event Listeners ---
+            generateManualBarcodeButton.addEventListener('click', generateManualBarcodes);
+            manualBarcodeInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    generateManualBarcodes();
+                }
+            });
+
+            generateSequentialBarcodeButton.addEventListener('click', generateSequentialBarcodes);
+            sequentialPrefixInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') { generateSequentialBarcodes(); }
+            });
+            sequentialStartInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') { generateSequentialBarcodes(); }
+            });
+            sequentialEndInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') { generateSequentialBarcodes(); }
+            });
+
+            addManualQrItemButton.addEventListener('click', addManualQrItemToList);
+            clearManualQrListButton.addEventListener('click', clearManualQrList);
+            generateManualQrListButton.addEventListener('click', generateManualQrList);
+            
+            generateCustomLabelButton.addEventListener('click', generateCustomLabels);
+
+            printAllCodesButton.addEventListener('click', printAllCodes);
+
+            manualBarcodeInput.value = "contoh-barcode-1\ncontoh-barcode-2\ncontoh-barcode-3";
+            generateManualBarcodes();
+        };
+    </script>
+</body>
+</html>
